@@ -248,6 +248,38 @@
   details { margin-top: 12px; }
   summary { cursor: pointer; color: var(--accent); font-size: 13px; }
   details[open] summary { margin-bottom: 8px; }
+
+  /* ---- Print / Save as PDF ---- */
+  #pdf-btn { margin-bottom: 16px; }
+  @media print {
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { background: #fff; color: #111; padding: 0; font-size: 12px; }
+    header, .disclaimer, section:not(#schedule-section), .footer, #pdf-btn { display: none !important; }
+    #schedule-section { display: block !important; background: none; box-shadow: none; padding: 0; }
+    #schedule-section h2 { display: none; }
+    .print-header { display: block !important; margin-bottom: 16px; border-bottom: 2px solid #111; padding-bottom: 10px; }
+    .print-header h1 { font-size: 18px; margin: 0 0 2px; color: #111; }
+    .print-header p { font-size: 11px; color: #555; margin: 0; }
+    #summary { background: #f4f4f4; border: 1px solid #ccc; color: #111; padding: 10px 12px; margin-bottom: 12px; border-radius: 4px; }
+    #summary strong { color: #000; }
+    #summary .muted { color: #555; }
+    .day-card { background: #fff; border: 1px solid #ccc !important; border-left-width: 3px !important; margin-bottom: 8px; padding: 10px 12px; break-inside: avoid; page-break-inside: avoid; border-radius: 0; }
+    .day-card.travel { border-left-color: #3a7bd5 !important; }
+    .day-card.prep { border-left-color: #c87800 !important; }
+    .day-card.dest { border-left-color: #2a8a50 !important; }
+    .day-card.recover { border-left-color: #7a4ab5 !important; }
+    .day-title { color: #111; font-size: 13px; }
+    .day-tag { background: #eee; color: #555; font-size: 10px; }
+    .day-row .lab { color: #666; }
+    .day-row .val { color: #111; }
+    .day-row .val .pill { background: #dce8ff; color: #1a4db3; }
+    .leg-list li { color: #444; border-left-color: #ccc; }
+    .leg-list li strong { color: #111; }
+    .rationale { color: #666; }
+    .muted { color: #666; }
+    a { color: #111; text-decoration: none; }
+  }
+  .print-header { display: none; }
 </style>
 </head>
 <body>
@@ -324,6 +356,11 @@ JFK to LHR, May 15 2026, 8:30 PM — May 16 2026, 8:45 AM"></textarea>
 
   <section id="schedule-section">
     <h2>4. Your schedule</h2>
+    <button id="pdf-btn" class="secondary" onclick="window.print()">&#x2193; Save as PDF / Print</button>
+    <div class="print-header">
+      <h1>Jet Lag Plan</h1>
+      <p id="print-subtitle"></p>
+    </div>
     <div id="summary"></div>
     <div id="schedule"></div>
   </section>
@@ -1211,6 +1248,7 @@ function renderSchedule(result) {
   const dose = result.schedule.find(d => d.melatonin)?.melatonin?.doseMg ?? 0.5;
   summary += `<br><span class="muted">Times shown in the timezone you'll be in. Melatonin dose: ${dose} mg.</span>`;
   $('summary').innerHTML = summary;
+  $('print-subtitle').textContent = `${AIRPORTS[trip.homeCode].city} → ${AIRPORTS[trip.destCode].city} · Generated ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
 
   $('schedule').innerHTML = schedule.map(renderDay).join('');
   $('schedule-section').style.display = 'block';
