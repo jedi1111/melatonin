@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jet Lag Plan — Melatonin & Light Schedule</title>
+<style>
+  :root {
+    --bg: #0f1419;
+    --panel: #1a2028;
+    --panel-2: #232b36;
+    --text: #e6ecf2;
+    --muted: #8a96a3;
+    --accent: #6ba6ff;
+    --accent-soft: #2a3b5a;
+    --warn: #ffb86b;
+    --warn-bg: #3a2c18;
+    --good: #7ed09e;
+    --line: #2c3540;
+    --shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    padding: 24px 16px 80px;
+  }
+  main { max-width: 940px; margin: 0 auto; }
+  h1 { font-size: 28px; margin: 0 0 4px; letter-spacing: -0.02em; }
+  h2 { font-size: 18px; margin: 0 0 12px; letter-spacing: -0.01em; color: var(--text); }
+  h3 { font-size: 14px; margin: 0 0 8px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  p { margin: 0 0 12px; }
+  .muted { color: var(--muted); font-size: 13px; }
+  header { margin-bottom: 24px; }
+  header p { color: var(--muted); margin: 0; }
+
+  .disclaimer {
+    background: var(--warn-bg);
+    border-left: 3px solid var(--warn);
+    color: #ffd9a8;
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+  .disclaimer strong { color: #fff; }
+
+  section {
+    background: var(--panel);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+
+  textarea, input, select, button {
+    font-family: inherit;
+    font-size: 14px;
+    background: var(--panel-2);
+    color: var(--text);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 8px 10px;
+  }
+  textarea { width: 100%; resize: vertical; min-height: 140px; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); }
+
+  button {
+    background: var(--accent);
+    color: #0a1320;
+    border: none;
+    font-weight: 600;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  button:hover { opacity: 0.9; }
+  button.secondary { background: var(--panel-2); color: var(--text); border: 1px solid var(--line); }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  fieldset {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin: 0;
+    background: var(--panel-2);
+  }
+  legend { padding: 0 6px; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+  fieldset label { display: block; margin-bottom: 8px; font-size: 13px; color: var(--muted); }
+  fieldset label:last-child { margin-bottom: 0; }
+  fieldset input, fieldset select { width: 100%; margin-top: 3px; }
+
+  /* Leg rows */
+  #legs-container { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+  .leg-row {
+    display: grid;
+    grid-template-columns: 30px 1fr auto;
+    gap: 10px;
+    align-items: start;
+    padding: 10px 12px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+  .leg-num {
+    font-weight: 600;
+    color: var(--muted);
+    font-size: 14px;
+    padding-top: 6px;
+    text-align: center;
+  }
+  .leg-fields {
+    display: grid;
+    grid-template-columns: minmax(70px, 1fr) minmax(70px, 1fr) minmax(180px, 2fr) minmax(180px, 2fr);
+    gap: 8px;
+  }
+  @media (max-width: 720px) {
+    .leg-fields { grid-template-columns: 1fr 1fr; }
+  }
+  .leg-fields label {
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0;
+  }
+  .leg-fields input { width: 100%; margin-top: 2px; font-size: 13px; padding: 6px 8px; }
+  .leg-fields .leg-from, .leg-fields .leg-to { text-transform: uppercase; }
+  .leg-remove {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    padding: 4px 10px;
+    font-size: 16px;
+    line-height: 1;
+    height: 30px;
+    margin-top: 18px;
+  }
+  .leg-remove:hover { color: var(--warn); border-color: var(--warn); }
+  .leg-hint {
+    grid-column: 2 / 3;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+    min-height: 16px;
+  }
+  .leg-hint.ok { color: var(--good); }
+  .leg-hint.bad { color: var(--warn); }
+
+  #trip-summary {
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-top: 10px;
+    font-size: 13px;
+    min-height: 20px;
+  }
+
+  #parse-msg { font-size: 13px; min-height: 18px; margin: 8px 0 0; }
+  #parse-msg.ok { color: var(--good); }
+  #parse-msg.bad { color: var(--warn); }
+
+  #schedule-section { display: none; }
+  #summary {
+    background: var(--panel-2);
+    padding: 14px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    border: 1px solid var(--line);
+  }
+  #summary strong { color: var(--accent); }
+
+  .day-card {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    background: var(--panel-2);
+  }
+  .day-card.travel { border-left: 3px solid var(--accent); }
+  .day-card.prep { border-left: 3px solid #ffb86b; }
+  .day-card.dest { border-left: 3px solid #7ed09e; }
+  .day-card.recover { border-left: 3px solid #c89bff; }
+
+  .day-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .day-title { font-weight: 600; font-size: 15px; }
+  .day-tag {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    background: var(--panel);
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+  .day-rows { display: grid; gap: 6px; }
+  .day-row { display: grid; grid-template-columns: 110px 1fr; gap: 12px; font-size: 14px; }
+  .day-row .lab { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; padding-top: 2px; }
+  .day-row .val { color: var(--text); }
+  .day-row .val .pill {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-right: 6px;
+  }
+  .day-row .val .pill.warn { background: #3a2c18; color: var(--warn); }
+  .leg-list { list-style: none; padding: 0; margin: 4px 0 0; }
+  .leg-list li {
+    font-size: 13px;
+    color: var(--muted);
+    padding: 3px 0;
+    border-left: 2px solid var(--line);
+    padding-left: 10px;
+    margin-bottom: 2px;
+  }
+  .leg-list li strong { color: var(--text); font-weight: 600; }
+  .rationale { color: var(--muted); font-size: 13px; font-style: italic; margin-top: 8px; }
+
+  .footer {
+    margin-top: 32px;
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+  }
+
+  details { margin-top: 12px; }
+  summary { cursor: pointer; color: var(--accent); font-size: 13px; }
+  details[open] summary { margin-bottom: 8px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Jet Lag Plan</h1>
+    <p>A melatonin and light-exposure schedule for international travel, based on published circadian protocols.</p>
+  </header>
+
+  <div class="disclaimer">
+    <strong>Not medical advice.</strong> Implements published protocols (Eastman & Burgess; Burgess et al. 2010) for personal planning only. Talk to your doctor before using melatonin, especially if you have health conditions, are pregnant, or take other medications.
+  </div>
+
+  <section>
+    <h2>1. Paste your itinerary</h2>
+    <p class="muted">Paste from a confirmation email, Flighty, Google Flights, TripIt, or any source. The parser handles multi-leg trips with layovers — it extracts each flight's airports, dates, and times.</p>
+    <textarea id="paste-area" placeholder="Examples:
+
+Alaska 737 on May 16, 2026
+↗ 8:30 AM PDT SEA
+↘ 4:38 PM EDT IAD
+
+United 996 on May 16, 2026
+↗ 7:20 PM EDT IAD
+↘ 9:05 AM GMT ACC
+
+…or simpler text:
+JFK to LHR, May 15 2026, 8:30 PM — May 16 2026, 8:45 AM"></textarea>
+    <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
+      <button id="parse-btn">Parse paste</button>
+      <button class="secondary" id="example-btn">Load example</button>
+      <button class="secondary" id="clear-legs-btn">Clear legs</button>
+    </div>
+    <p id="parse-msg"></p>
+  </section>
+
+  <section>
+    <h2>2. Confirm flight legs</h2>
+    <p class="muted">Each row is one flight. Times are local to each airport. The app auto-detects your destination by longest stay between flights.</p>
+    <div id="legs-container"></div>
+    <button class="secondary" id="add-leg-btn" type="button">+ Add a leg</button>
+    <div id="trip-summary">Add flight legs above to see the detected trip.</div>
+  </section>
+
+  <section>
+    <h2>3. Sleep & dose</h2>
+    <div class="form-grid">
+      <fieldset>
+        <legend>Your usual sleep at home</legend>
+        <label>Bedtime <input id="home-bed" type="time" value="23:00"></label>
+        <label>Wake time <input id="home-wake" type="time" value="07:00"></label>
+      </fieldset>
+      <fieldset>
+        <legend>Destination &amp; dose</legend>
+        <label>Target bedtime at destination <input id="dest-bed" type="time" value="23:00"></label>
+        <label>Melatonin dose
+          <select id="dose">
+            <option value="0.5" selected>0.5 mg — recommended for phase-shifting (Burgess 2010)</option>
+            <option value="1">1 mg</option>
+            <option value="3">3 mg — typical OTC tablet</option>
+            <option value="5">5 mg — typical OTC (less effective for shifting)</option>
+          </select>
+        </label>
+      </fieldset>
+    </div>
+    <button id="compute-btn">Generate schedule</button>
+    <details>
+      <summary>How this works</summary>
+      <p class="muted" style="margin-top: 8px;">
+        Eastward travel needs a <em>phase advance</em> (clock moves earlier). Westward needs a <em>phase delay</em>. Low-dose melatonin in the late afternoon advances; melatonin in the morning delays. Bright light is the strongest zeitgeber: morning light advances, evening light delays. Crucially, light at the wrong time can <em>undo</em> the shift, so the plan tells you both when to seek light and when to avoid it. Body adjustment rate is roughly 1 h/day eastward and 1.5 h/day westward — long shifts can't fully complete during short trips. Shifts &gt; 12 h are treated as the shorter direction (e.g., 14 h east ≈ 10 h west). With multi-leg itineraries, the destination is auto-detected as the airport where you spend the longest continuous stay; layovers are ignored for circadian planning but listed in the travel-day card.
+      </p>
+    </details>
+  </section>
+
+  <section id="schedule-section">
+    <h2>4. Your schedule</h2>
+    <div id="summary"></div>
+    <div id="schedule"></div>
+  </section>
+
+  <p class="footer">Single-file local app — no data is sent anywhere. Save this file and reuse it for every trip.</p>
+</main>
+
+<script>
+"use strict";
+
+// ============================================================
+// IATA airport database (curated international set)
+// ============================================================
+const AIRPORTS = {
+  // United States
+  JFK:{city:"New York (JFK)",tz:"America/New_York"}, LGA:{city:"New York (LaGuardia)",tz:"America/New_York"},
+  EWR:{city:"Newark",tz:"America/New_York"}, BOS:{city:"Boston",tz:"America/New_York"},
+  DCA:{city:"Washington (Reagan)",tz:"America/New_York"}, IAD:{city:"Washington (Dulles)",tz:"America/New_York"},
+  BWI:{city:"Baltimore",tz:"America/New_York"}, PHL:{city:"Philadelphia",tz:"America/New_York"},
+  ATL:{city:"Atlanta",tz:"America/New_York"}, MIA:{city:"Miami",tz:"America/New_York"},
+  FLL:{city:"Fort Lauderdale",tz:"America/New_York"}, MCO:{city:"Orlando",tz:"America/New_York"},
+  TPA:{city:"Tampa",tz:"America/New_York"}, CLT:{city:"Charlotte",tz:"America/New_York"},
+  RDU:{city:"Raleigh-Durham",tz:"America/New_York"}, PIT:{city:"Pittsburgh",tz:"America/New_York"},
+  DTW:{city:"Detroit",tz:"America/Detroit"}, CLE:{city:"Cleveland",tz:"America/New_York"},
+  IND:{city:"Indianapolis",tz:"America/Indiana/Indianapolis"}, CMH:{city:"Columbus",tz:"America/New_York"},
+  CVG:{city:"Cincinnati",tz:"America/New_York"},
+  ORD:{city:"Chicago (O'Hare)",tz:"America/Chicago"}, MDW:{city:"Chicago (Midway)",tz:"America/Chicago"},
+  MSP:{city:"Minneapolis-St. Paul",tz:"America/Chicago"}, MKE:{city:"Milwaukee",tz:"America/Chicago"},
+  STL:{city:"St. Louis",tz:"America/Chicago"}, MCI:{city:"Kansas City",tz:"America/Chicago"},
+  MEM:{city:"Memphis",tz:"America/Chicago"}, BNA:{city:"Nashville",tz:"America/Chicago"},
+  MSY:{city:"New Orleans",tz:"America/Chicago"}, IAH:{city:"Houston (Bush)",tz:"America/Chicago"},
+  HOU:{city:"Houston (Hobby)",tz:"America/Chicago"}, DFW:{city:"Dallas-Fort Worth",tz:"America/Chicago"},
+  DAL:{city:"Dallas (Love)",tz:"America/Chicago"}, AUS:{city:"Austin",tz:"America/Chicago"},
+  SAT:{city:"San Antonio",tz:"America/Chicago"}, OKC:{city:"Oklahoma City",tz:"America/Chicago"},
+  DEN:{city:"Denver",tz:"America/Denver"}, SLC:{city:"Salt Lake City",tz:"America/Denver"},
+  ABQ:{city:"Albuquerque",tz:"America/Denver"}, PHX:{city:"Phoenix",tz:"America/Phoenix"},
+  TUS:{city:"Tucson",tz:"America/Phoenix"}, LAS:{city:"Las Vegas",tz:"America/Los_Angeles"},
+  LAX:{city:"Los Angeles",tz:"America/Los_Angeles"}, BUR:{city:"Burbank",tz:"America/Los_Angeles"},
+  SNA:{city:"Orange County",tz:"America/Los_Angeles"}, ONT:{city:"Ontario CA",tz:"America/Los_Angeles"},
+  SAN:{city:"San Diego",tz:"America/Los_Angeles"}, SFO:{city:"San Francisco",tz:"America/Los_Angeles"},
+  OAK:{city:"Oakland",tz:"America/Los_Angeles"}, SJC:{city:"San Jose CA",tz:"America/Los_Angeles"},
+  SMF:{city:"Sacramento",tz:"America/Los_Angeles"}, RNO:{city:"Reno",tz:"America/Los_Angeles"},
+  PDX:{city:"Portland OR",tz:"America/Los_Angeles"}, SEA:{city:"Seattle",tz:"America/Los_Angeles"},
+  ANC:{city:"Anchorage",tz:"America/Anchorage"}, HNL:{city:"Honolulu",tz:"Pacific/Honolulu"},
+  OGG:{city:"Maui",tz:"Pacific/Honolulu"}, KOA:{city:"Kona",tz:"Pacific/Honolulu"},
+  // Canada
+  YYZ:{city:"Toronto",tz:"America/Toronto"}, YUL:{city:"Montreal",tz:"America/Montreal"},
+  YOW:{city:"Ottawa",tz:"America/Toronto"}, YHZ:{city:"Halifax",tz:"America/Halifax"},
+  YYC:{city:"Calgary",tz:"America/Edmonton"}, YEG:{city:"Edmonton",tz:"America/Edmonton"},
+  YVR:{city:"Vancouver",tz:"America/Vancouver"}, YWG:{city:"Winnipeg",tz:"America/Winnipeg"},
+  // Latin America & Caribbean
+  MEX:{city:"Mexico City",tz:"America/Mexico_City"}, CUN:{city:"Cancun",tz:"America/Cancun"},
+  GDL:{city:"Guadalajara",tz:"America/Mexico_City"}, PVR:{city:"Puerto Vallarta",tz:"America/Mazatlan"},
+  SJD:{city:"Los Cabos",tz:"America/Mazatlan"}, GUA:{city:"Guatemala City",tz:"America/Guatemala"},
+  SJO:{city:"San José CR",tz:"America/Costa_Rica"}, PTY:{city:"Panama City",tz:"America/Panama"},
+  BOG:{city:"Bogotá",tz:"America/Bogota"}, LIM:{city:"Lima",tz:"America/Lima"},
+  UIO:{city:"Quito",tz:"America/Guayaquil"}, SCL:{city:"Santiago",tz:"America/Santiago"},
+  EZE:{city:"Buenos Aires (Ezeiza)",tz:"America/Argentina/Buenos_Aires"},
+  AEP:{city:"Buenos Aires (Aeroparque)",tz:"America/Argentina/Buenos_Aires"},
+  GRU:{city:"São Paulo (Guarulhos)",tz:"America/Sao_Paulo"}, GIG:{city:"Rio de Janeiro",tz:"America/Sao_Paulo"},
+  BSB:{city:"Brasilia",tz:"America/Sao_Paulo"}, MVD:{city:"Montevideo",tz:"America/Montevideo"},
+  CCS:{city:"Caracas",tz:"America/Caracas"}, SJU:{city:"San Juan",tz:"America/Puerto_Rico"},
+  NAS:{city:"Nassau",tz:"America/Nassau"}, KIN:{city:"Kingston",tz:"America/Jamaica"},
+  HAV:{city:"Havana",tz:"America/Havana"}, PUJ:{city:"Punta Cana",tz:"America/Santo_Domingo"},
+  // Europe
+  LHR:{city:"London (Heathrow)",tz:"Europe/London"}, LGW:{city:"London (Gatwick)",tz:"Europe/London"},
+  STN:{city:"London (Stansted)",tz:"Europe/London"}, LTN:{city:"London (Luton)",tz:"Europe/London"},
+  LCY:{city:"London (City)",tz:"Europe/London"}, MAN:{city:"Manchester",tz:"Europe/London"},
+  EDI:{city:"Edinburgh",tz:"Europe/London"}, GLA:{city:"Glasgow",tz:"Europe/London"},
+  BHX:{city:"Birmingham UK",tz:"Europe/London"}, DUB:{city:"Dublin",tz:"Europe/Dublin"},
+  CDG:{city:"Paris (CDG)",tz:"Europe/Paris"}, ORY:{city:"Paris (Orly)",tz:"Europe/Paris"},
+  NCE:{city:"Nice",tz:"Europe/Paris"}, LYS:{city:"Lyon",tz:"Europe/Paris"},
+  AMS:{city:"Amsterdam",tz:"Europe/Amsterdam"}, BRU:{city:"Brussels",tz:"Europe/Brussels"},
+  LUX:{city:"Luxembourg",tz:"Europe/Luxembourg"}, FRA:{city:"Frankfurt",tz:"Europe/Berlin"},
+  MUC:{city:"Munich",tz:"Europe/Berlin"}, BER:{city:"Berlin",tz:"Europe/Berlin"},
+  HAM:{city:"Hamburg",tz:"Europe/Berlin"}, DUS:{city:"Düsseldorf",tz:"Europe/Berlin"},
+  CGN:{city:"Cologne",tz:"Europe/Berlin"}, STR:{city:"Stuttgart",tz:"Europe/Berlin"},
+  ZRH:{city:"Zurich",tz:"Europe/Zurich"}, GVA:{city:"Geneva",tz:"Europe/Zurich"},
+  VIE:{city:"Vienna",tz:"Europe/Vienna"}, CPH:{city:"Copenhagen",tz:"Europe/Copenhagen"},
+  ARN:{city:"Stockholm",tz:"Europe/Stockholm"}, GOT:{city:"Gothenburg",tz:"Europe/Stockholm"},
+  OSL:{city:"Oslo",tz:"Europe/Oslo"}, HEL:{city:"Helsinki",tz:"Europe/Helsinki"},
+  KEF:{city:"Reykjavik",tz:"Atlantic/Reykjavik"}, MAD:{city:"Madrid",tz:"Europe/Madrid"},
+  BCN:{city:"Barcelona",tz:"Europe/Madrid"}, AGP:{city:"Málaga",tz:"Europe/Madrid"},
+  PMI:{city:"Palma Mallorca",tz:"Europe/Madrid"}, LIS:{city:"Lisbon",tz:"Europe/Lisbon"},
+  OPO:{city:"Porto",tz:"Europe/Lisbon"}, FCO:{city:"Rome (Fiumicino)",tz:"Europe/Rome"},
+  CIA:{city:"Rome (Ciampino)",tz:"Europe/Rome"}, MXP:{city:"Milan (Malpensa)",tz:"Europe/Rome"},
+  LIN:{city:"Milan (Linate)",tz:"Europe/Rome"}, VCE:{city:"Venice",tz:"Europe/Rome"},
+  NAP:{city:"Naples",tz:"Europe/Rome"}, ATH:{city:"Athens",tz:"Europe/Athens"},
+  IST:{city:"Istanbul",tz:"Europe/Istanbul"}, SAW:{city:"Istanbul (Sabiha)",tz:"Europe/Istanbul"},
+  PRG:{city:"Prague",tz:"Europe/Prague"}, WAW:{city:"Warsaw",tz:"Europe/Warsaw"},
+  KRK:{city:"Krakow",tz:"Europe/Warsaw"}, BUD:{city:"Budapest",tz:"Europe/Budapest"},
+  OTP:{city:"Bucharest",tz:"Europe/Bucharest"}, SOF:{city:"Sofia",tz:"Europe/Sofia"},
+  BEG:{city:"Belgrade",tz:"Europe/Belgrade"}, ZAG:{city:"Zagreb",tz:"Europe/Zagreb"},
+  // Russia & CIS
+  SVO:{city:"Moscow (Sheremetyevo)",tz:"Europe/Moscow"}, DME:{city:"Moscow (Domodedovo)",tz:"Europe/Moscow"},
+  VKO:{city:"Moscow (Vnukovo)",tz:"Europe/Moscow"}, LED:{city:"St. Petersburg",tz:"Europe/Moscow"},
+  KBP:{city:"Kyiv (Boryspil)",tz:"Europe/Kiev"}, TAS:{city:"Tashkent",tz:"Asia/Tashkent"},
+  ALA:{city:"Almaty",tz:"Asia/Almaty"}, GYD:{city:"Baku",tz:"Asia/Baku"},
+  TBS:{city:"Tbilisi",tz:"Asia/Tbilisi"}, EVN:{city:"Yerevan",tz:"Asia/Yerevan"},
+  // Middle East
+  DXB:{city:"Dubai",tz:"Asia/Dubai"}, DWC:{city:"Dubai (DWC)",tz:"Asia/Dubai"},
+  AUH:{city:"Abu Dhabi",tz:"Asia/Dubai"}, DOH:{city:"Doha",tz:"Asia/Qatar"},
+  KWI:{city:"Kuwait",tz:"Asia/Kuwait"}, BAH:{city:"Bahrain",tz:"Asia/Bahrain"},
+  MCT:{city:"Muscat",tz:"Asia/Muscat"}, RUH:{city:"Riyadh",tz:"Asia/Riyadh"},
+  JED:{city:"Jeddah",tz:"Asia/Riyadh"}, AMM:{city:"Amman",tz:"Asia/Amman"},
+  BEY:{city:"Beirut",tz:"Asia/Beirut"}, TLV:{city:"Tel Aviv",tz:"Asia/Jerusalem"},
+  // Africa — North & East
+  CAI:{city:"Cairo",tz:"Africa/Cairo"}, CMN:{city:"Casablanca",tz:"Africa/Casablanca"},
+  RAK:{city:"Marrakech",tz:"Africa/Casablanca"}, TUN:{city:"Tunis",tz:"Africa/Tunis"},
+  ALG:{city:"Algiers",tz:"Africa/Algiers"}, NBO:{city:"Nairobi",tz:"Africa/Nairobi"},
+  ADD:{city:"Addis Ababa",tz:"Africa/Addis_Ababa"}, EBB:{city:"Entebbe",tz:"Africa/Kampala"},
+  KGL:{city:"Kigali",tz:"Africa/Kigali"}, BJM:{city:"Bujumbura",tz:"Africa/Bujumbura"},
+  DAR:{city:"Dar es Salaam",tz:"Africa/Dar_es_Salaam"}, ZNZ:{city:"Zanzibar",tz:"Africa/Dar_es_Salaam"},
+  JIB:{city:"Djibouti",tz:"Africa/Djibouti"}, KRT:{city:"Khartoum",tz:"Africa/Khartoum"},
+  // Africa — West
+  LOS:{city:"Lagos",tz:"Africa/Lagos"}, ABV:{city:"Abuja",tz:"Africa/Lagos"},
+  ACC:{city:"Accra",tz:"Africa/Accra"}, FNA:{city:"Freetown",tz:"Africa/Freetown"},
+  ROB:{city:"Monrovia",tz:"Africa/Monrovia"}, DKR:{city:"Dakar",tz:"Africa/Dakar"},
+  BKO:{city:"Bamako",tz:"Africa/Bamako"}, OUA:{city:"Ouagadougou",tz:"Africa/Ouagadougou"},
+  NIM:{city:"Niamey",tz:"Africa/Niamey"}, NDJ:{city:"N'Djamena",tz:"Africa/Ndjamena"},
+  COO:{city:"Cotonou",tz:"Africa/Porto-Novo"}, LFW:{city:"Lomé",tz:"Africa/Lome"},
+  ABJ:{city:"Abidjan",tz:"Africa/Abidjan"}, FNJ:{city:"Conakry",tz:"Africa/Conakry"},
+  BJL:{city:"Banjul",tz:"Africa/Banjul"}, NKC:{city:"Nouakchott",tz:"Africa/Nouakchott"},
+  // Africa — Southern & Indian Ocean
+  JNB:{city:"Johannesburg",tz:"Africa/Johannesburg"}, CPT:{city:"Cape Town",tz:"Africa/Johannesburg"},
+  DUR:{city:"Durban",tz:"Africa/Johannesburg"}, LUN:{city:"Lusaka",tz:"Africa/Lusaka"},
+  HRE:{city:"Harare",tz:"Africa/Harare"}, WDH:{city:"Windhoek",tz:"Africa/Windhoek"},
+  MPM:{city:"Maputo",tz:"Africa/Maputo"}, LAD:{city:"Luanda",tz:"Africa/Luanda"},
+  SEZ:{city:"Mahé Seychelles",tz:"Indian/Mahe"}, MRU:{city:"Mauritius",tz:"Indian/Mauritius"},
+  TNR:{city:"Antananarivo",tz:"Indian/Antananarivo"},
+  // Asia — South
+  DEL:{city:"Delhi",tz:"Asia/Kolkata"}, BOM:{city:"Mumbai",tz:"Asia/Kolkata"},
+  BLR:{city:"Bengaluru",tz:"Asia/Kolkata"}, MAA:{city:"Chennai",tz:"Asia/Kolkata"},
+  CCU:{city:"Kolkata",tz:"Asia/Kolkata"}, HYD:{city:"Hyderabad",tz:"Asia/Kolkata"},
+  COK:{city:"Kochi",tz:"Asia/Kolkata"}, GOI:{city:"Goa",tz:"Asia/Kolkata"},
+  DAC:{city:"Dhaka",tz:"Asia/Dhaka"}, KTM:{city:"Kathmandu",tz:"Asia/Kathmandu"},
+  CMB:{city:"Colombo",tz:"Asia/Colombo"}, MLE:{city:"Malé",tz:"Indian/Maldives"},
+  // Asia — Southeast
+  BKK:{city:"Bangkok (Suvarnabhumi)",tz:"Asia/Bangkok"}, DMK:{city:"Bangkok (Don Mueang)",tz:"Asia/Bangkok"},
+  HKT:{city:"Phuket",tz:"Asia/Bangkok"}, CNX:{city:"Chiang Mai",tz:"Asia/Bangkok"},
+  KUL:{city:"Kuala Lumpur",tz:"Asia/Kuala_Lumpur"}, SIN:{city:"Singapore",tz:"Asia/Singapore"},
+  CGK:{city:"Jakarta",tz:"Asia/Jakarta"}, DPS:{city:"Bali",tz:"Asia/Makassar"},
+  MNL:{city:"Manila",tz:"Asia/Manila"}, CEB:{city:"Cebu",tz:"Asia/Manila"},
+  HAN:{city:"Hanoi",tz:"Asia/Bangkok"}, SGN:{city:"Ho Chi Minh City",tz:"Asia/Bangkok"},
+  PNH:{city:"Phnom Penh",tz:"Asia/Phnom_Penh"}, RGN:{city:"Yangon",tz:"Asia/Yangon"},
+  VTE:{city:"Vientiane",tz:"Asia/Vientiane"},
+  // Asia — East
+  HKG:{city:"Hong Kong",tz:"Asia/Hong_Kong"}, MFM:{city:"Macau",tz:"Asia/Macau"},
+  TPE:{city:"Taipei (Taoyuan)",tz:"Asia/Taipei"}, TSA:{city:"Taipei (Songshan)",tz:"Asia/Taipei"},
+  PEK:{city:"Beijing (Capital)",tz:"Asia/Shanghai"}, PKX:{city:"Beijing (Daxing)",tz:"Asia/Shanghai"},
+  PVG:{city:"Shanghai (Pudong)",tz:"Asia/Shanghai"}, SHA:{city:"Shanghai (Hongqiao)",tz:"Asia/Shanghai"},
+  CAN:{city:"Guangzhou",tz:"Asia/Shanghai"}, SZX:{city:"Shenzhen",tz:"Asia/Shanghai"},
+  CTU:{city:"Chengdu",tz:"Asia/Shanghai"}, XIY:{city:"Xi'an",tz:"Asia/Shanghai"},
+  ICN:{city:"Seoul (Incheon)",tz:"Asia/Seoul"}, GMP:{city:"Seoul (Gimpo)",tz:"Asia/Seoul"},
+  PUS:{city:"Busan",tz:"Asia/Seoul"}, NRT:{city:"Tokyo (Narita)",tz:"Asia/Tokyo"},
+  HND:{city:"Tokyo (Haneda)",tz:"Asia/Tokyo"}, KIX:{city:"Osaka (Kansai)",tz:"Asia/Tokyo"},
+  ITM:{city:"Osaka (Itami)",tz:"Asia/Tokyo"}, NGO:{city:"Nagoya",tz:"Asia/Tokyo"},
+  CTS:{city:"Sapporo",tz:"Asia/Tokyo"}, FUK:{city:"Fukuoka",tz:"Asia/Tokyo"},
+  ULN:{city:"Ulaanbaatar",tz:"Asia/Ulaanbaatar"},
+  // Oceania
+  SYD:{city:"Sydney",tz:"Australia/Sydney"}, MEL:{city:"Melbourne",tz:"Australia/Melbourne"},
+  BNE:{city:"Brisbane",tz:"Australia/Brisbane"}, PER:{city:"Perth",tz:"Australia/Perth"},
+  ADL:{city:"Adelaide",tz:"Australia/Adelaide"}, OOL:{city:"Gold Coast",tz:"Australia/Brisbane"},
+  CNS:{city:"Cairns",tz:"Australia/Brisbane"}, AKL:{city:"Auckland",tz:"Pacific/Auckland"},
+  WLG:{city:"Wellington",tz:"Pacific/Auckland"}, CHC:{city:"Christchurch",tz:"Pacific/Auckland"},
+  NAN:{city:"Nadi",tz:"Pacific/Fiji"}, PPT:{city:"Tahiti",tz:"Pacific/Tahiti"},
+  GUM:{city:"Guam",tz:"Pacific/Guam"}
+};
+
+// ============================================================
+// Time / timezone utilities (using Intl)
+// ============================================================
+function tzOffsetMinutes(tz, date) {
+  const dtf = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz, hour12: false,
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit'
+  });
+  const parts = {};
+  for (const p of dtf.formatToParts(date)) parts[p.type] = p.value;
+  let h = +parts.hour; if (h === 24) h = 0;
+  const asUTC = Date.UTC(+parts.year, +parts.month - 1, +parts.day, h, +parts.minute, +parts.second);
+  return Math.round((asUTC - date.getTime()) / 60000);
+}
+
+function makeZonedDate(year, month, day, hour, minute, tz) {
+  const guess1 = new Date(Date.UTC(year, month - 1, day, hour, minute));
+  const off1 = tzOffsetMinutes(tz, guess1);
+  const guess2 = new Date(guess1.getTime() - off1 * 60000);
+  const off2 = tzOffsetMinutes(tz, guess2);
+  return new Date(guess1.getTime() - off2 * 60000);
+}
+
+function fmtTime(date, tz) {
+  return new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', hour12: true }).format(date);
+}
+function fmtDate(date, tz) {
+  return new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short', month: 'short', day: 'numeric' }).format(date);
+}
+function fmtTzAbbr(date, tz) {
+  const parts = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'short' }).formatToParts(date);
+  const t = parts.find(p => p.type === 'timeZoneName');
+  return t ? t.value : '';
+}
+function addDays(date, days) { return new Date(date.getTime() + days * 86400000); }
+
+function clockTimeOnDateOf(anchor, tz, hour, minute) {
+  const dtf = new Intl.DateTimeFormat('en-US', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' });
+  const parts = {};
+  for (const p of dtf.formatToParts(anchor)) parts[p.type] = p.value;
+  return makeZonedDate(+parts.year, +parts.month, +parts.day, hour, minute, tz);
+}
+
+function parseHM(str) {
+  const m = /^(\d{1,2}):(\d{2})$/.exec((str || '').trim());
+  if (!m) return { h: 23, m: 0 };
+  return { h: +m[1], m: +m[2] };
+}
+
+function formatLocalDtForInput(date, tz) {
+  if (!tz) return '';
+  const dtf = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', hour12: false
+  });
+  const parts = {};
+  for (const p of dtf.formatToParts(date)) parts[p.type] = p.value;
+  let h = parts.hour === '24' ? '00' : parts.hour;
+  return `${parts.year}-${parts.month}-${parts.day}T${h}:${parts.minute}`;
+}
+
+function parseDtLocal(s) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(s);
+  if (!m) return null;
+  return [+m[1], +m[2], +m[3], +m[4], +m[5]];
+}
+
+// ============================================================
+// Itinerary parser — Flighty-style first, generic fallback
+// ============================================================
+const MONTHS = {
+  jan:1, january:1, feb:2, february:2, mar:3, march:3, apr:4, april:4,
+  may:5, jun:6, june:6, jul:7, july:7, aug:8, august:8,
+  sep:9, sept:9, september:9, oct:10, october:10, nov:11, november:11, dec:12, december:12
+};
+
+function inferYear(mo, d) {
+  const today = new Date();
+  const cand = new Date(today.getFullYear(), mo - 1, d);
+  if (cand.getTime() < today.getTime() - 30 * 86400000) return today.getFullYear() + 1;
+  return today.getFullYear();
+}
+
+function parseDateString(s) {
+  let m = s.match(/^([A-Za-z]+)\s+(\d{1,2})(?:[,\s]+(\d{2,4}))?$/);
+  if (m) {
+    const mo = MONTHS[m[1].toLowerCase()];
+    if (!mo) return null;
+    const d = +m[2];
+    let y = m[3] ? +m[3] : null;
+    if (y && y < 100) y += 2000;
+    if (!y) y = inferYear(mo, d);
+    return { y, mo, d };
+  }
+  m = s.match(/^(\d{1,2})\s+([A-Za-z]+)(?:\s+(\d{2,4}))?$/);
+  if (m) {
+    const mo = MONTHS[m[2].toLowerCase()];
+    if (!mo) return null;
+    const d = +m[1];
+    let y = m[3] ? +m[3] : null;
+    if (y && y < 100) y += 2000;
+    if (!y) y = inferYear(mo, d);
+    return { y, mo, d };
+  }
+  return null;
+}
+
+function parseClockTime(timeStr, ampm) {
+  const m = timeStr.match(/^(\d{1,2}):?(\d{2})?$/);
+  if (!m) return null;
+  let h = +m[1];
+  const mi = m[2] ? +m[2] : 0;
+  if (ampm) {
+    const ap = ampm.toLowerCase().replace(/\./g, '');
+    if (h === 12) h = 0;
+    if (ap.startsWith('p')) h += 12;
+  }
+  if (h < 0 || h > 23 || mi < 0 || mi > 59) return null;
+  return { h, m: mi };
+}
+
+// Parse "↗ 8:30 AM PDT SEA" style itineraries (Flighty + similar).
+// Returns array of legs { fromCode, toCode, dep:Date, arr:Date }.
+function parseFlightyLegs(text) {
+  const lines = text.split(/\r?\n/);
+  const legs = [];
+  let lastDate = null;
+  let pending = null;
+
+  const arrowDep = /[↗⬆⇗▲]/;
+  const arrowArr = /[↘⬇⇘▼]/;
+  const flightLineRe = /[↗↘⬆⬇⇗⇘▲▼]\s*(\d{1,2}(?::\d{2})?)\s*(AM|PM|A\.M\.|P\.M\.|am|pm|a\.m\.|p\.m\.)?\s+([A-Za-z]{2,5})\s+([A-Z]{3})/;
+
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (!line) continue;
+
+    const dateM = line.match(/\bon\s+([A-Za-z]+\s+\d{1,2}(?:,?\s+\d{2,4})?)/i)
+               || line.match(/\b(\d{1,2}\s+[A-Za-z]+(?:\s+\d{2,4})?)\s*$/);
+    if (dateM) {
+      const parsed = parseDateString(dateM[1].replace(',', '').trim());
+      if (parsed) lastDate = parsed;
+    }
+
+    if (arrowDep.test(line)) {
+      const m = line.match(flightLineRe);
+      if (m && lastDate) {
+        const time = parseClockTime(m[1], m[2]);
+        if (time) pending = { code: m[4], date: lastDate, time };
+      }
+      continue;
+    }
+    if (arrowArr.test(line)) {
+      const m = line.match(flightLineRe);
+      if (m && pending) {
+        const time = parseClockTime(m[1], m[2]);
+        const fromTz = AIRPORTS[pending.code]?.tz;
+        const toTz = AIRPORTS[m[4]]?.tz;
+        if (time && fromTz && toTz) {
+          const dep = makeZonedDate(pending.date.y, pending.date.mo, pending.date.d, pending.time.h, pending.time.m, fromTz);
+          let arr = makeZonedDate(pending.date.y, pending.date.mo, pending.date.d, time.h, time.m, toTz);
+          if (arr <= dep) {
+            // Crossed midnight at destination — add a day
+            const nextLocal = addDays(new Date(Date.UTC(pending.date.y, pending.date.mo - 1, pending.date.d)), 1);
+            arr = makeZonedDate(nextLocal.getUTCFullYear(), nextLocal.getUTCMonth() + 1, nextLocal.getUTCDate(), time.h, time.m, toTz);
+          }
+          legs.push({ fromCode: pending.code, toCode: m[4], dep, arr });
+        }
+        pending = null;
+      }
+      continue;
+    }
+  }
+  return legs;
+}
+
+// Generic parser — for plain-text itineraries with no arrow markers.
+function parseGenericLegs(text) {
+  const codes = [];
+  const codeRegex = /\b([A-Z]{3})\b/g;
+  let m;
+  while ((m = codeRegex.exec(text)) !== null) {
+    if (AIRPORTS[m[1]]) codes.push({ code: m[1], idx: m.index });
+  }
+  const dates = extractDates(text);
+  const times = extractTimes(text);
+  const dts = combineToDatetimes(dates, times);
+
+  // Pair every 2 codes with every 2 datetimes as one leg.
+  const legs = [];
+  const nLegs = Math.min(Math.floor(codes.length / 2), Math.floor(dts.length / 2));
+  for (let i = 0; i < nLegs; i++) {
+    const fromCode = codes[i * 2].code;
+    const toCode = codes[i * 2 + 1].code;
+    const d1 = dts[i * 2], d2 = dts[i * 2 + 1];
+    const fromTz = AIRPORTS[fromCode]?.tz;
+    const toTz = AIRPORTS[toCode]?.tz;
+    if (!fromTz || !toTz) continue;
+    const dep = makeZonedDate(d1.y, d1.mo, d1.d, d1.h, d1.m, fromTz);
+    let arr = makeZonedDate(d2.y, d2.mo, d2.d, d2.h, d2.m, toTz);
+    if (arr <= dep) {
+      const next = addDays(new Date(Date.UTC(d2.y, d2.mo - 1, d2.d)), 1);
+      arr = makeZonedDate(next.getUTCFullYear(), next.getUTCMonth() + 1, next.getUTCDate(), d2.h, d2.m, toTz);
+    }
+    legs.push({ fromCode, toCode, dep, arr });
+  }
+  return legs;
+}
+
+function extractDates(text) {
+  const out = [];
+  const seen = new Set();
+  const push = (y, mo, d, idx) => {
+    if (!y || !mo || !d || mo < 1 || mo > 12 || d < 1 || d > 31) return;
+    if (seen.has(idx)) return;
+    seen.add(idx);
+    out.push({ y, mo, d, idx });
+  };
+  let m;
+  const reISO = /\b(\d{4})-(\d{1,2})-(\d{1,2})\b/g;
+  while ((m = reISO.exec(text)) !== null) push(+m[1], +m[2], +m[3], m.index);
+  const reMD = /\b(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?\s+(\d{1,2})(?:[,\s]+(\d{2,4}))?\b/gi;
+  while ((m = reMD.exec(text)) !== null) {
+    const mo = MONTHS[m[1].toLowerCase()];
+    let y = m[3] ? +m[3] : null;
+    if (y && y < 100) y += 2000;
+    push(y || inferYear(mo, +m[2]), mo, +m[2], m.index);
+  }
+  const reDM = /\b(\d{1,2})[-\s]?(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?[-\s]?(\d{2,4})?\b/gi;
+  while ((m = reDM.exec(text)) !== null) {
+    const mo = MONTHS[m[2].toLowerCase()];
+    let y = m[3] ? +m[3] : null;
+    if (y && y < 100) y += 2000;
+    push(y || inferYear(mo, +m[1]), mo, +m[1], m.index);
+  }
+  const reNum = /\b(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?\b/g;
+  while ((m = reNum.exec(text)) !== null) {
+    let y = m[3] ? +m[3] : null;
+    if (y && y < 100) y += 2000;
+    push(y || inferYear(+m[1], +m[2]), +m[1], +m[2], m.index);
+  }
+  return out.sort((a, b) => a.idx - b.idx);
+}
+
+function extractTimes(text) {
+  const out = [];
+  const seen = new Set();
+  const push = (h, mi, idx) => {
+    if (h < 0 || h > 23 || mi < 0 || mi > 59) return;
+    if (seen.has(idx)) return;
+    seen.add(idx);
+    out.push({ h, m: mi, idx });
+  };
+  let m;
+  const re12 = /\b(\d{1,2})(?::(\d{2}))?\s*([apAP])\.?\s*[mM]\.?/g;
+  while ((m = re12.exec(text)) !== null) {
+    let h = +m[1]; const mi = m[2] ? +m[2] : 0;
+    if (h === 12) h = 0;
+    if (m[3].toLowerCase() === 'p') h += 12;
+    push(h, mi, m.index);
+  }
+  const re24 = /\b([01]?\d|2[0-3]):([0-5]\d)\b/g;
+  while ((m = re24.exec(text)) !== null) push(+m[1], +m[2], m.index);
+  return out.sort((a, b) => a.idx - b.idx);
+}
+
+function combineToDatetimes(dates, times) {
+  const usedTimes = new Set();
+  const result = [];
+  for (const d of dates) {
+    let best = -1, bestDist = 80;
+    for (let i = 0; i < times.length; i++) {
+      if (usedTimes.has(i)) continue;
+      const dist = Math.abs(times[i].idx - d.idx);
+      if (dist < bestDist) { bestDist = dist; best = i; }
+    }
+    if (best >= 0) {
+      usedTimes.add(best);
+      result.push({ y: d.y, mo: d.mo, d: d.d, h: times[best].h, m: times[best].m, idx: d.idx });
+    } else {
+      result.push({ y: d.y, mo: d.mo, d: d.d, h: 12, m: 0, idx: d.idx });
+    }
+  }
+  return result.sort((a, b) => a.idx - b.idx);
+}
+
+function parseItinerary(text) {
+  const flighty = parseFlightyLegs(text);
+  if (flighty.length >= 1) return flighty;
+  return parseGenericLegs(text);
+}
+
+// ============================================================
+// Trip analysis — find destination by longest stay
+// ============================================================
+function analyzeTrip(legs) {
+  if (!legs || legs.length === 0) throw new Error('No flight legs');
+  legs = [...legs].sort((a, b) => a.dep - b.dep);
+
+  let longestStay = 0;
+  let destLegIdx = legs.length - 1;
+  for (let i = 0; i < legs.length - 1; i++) {
+    if (legs[i].toCode === legs[i + 1].fromCode) {
+      const stay = legs[i + 1].dep - legs[i].arr;
+      if (stay > longestStay) {
+        longestStay = stay;
+        destLegIdx = i;
+      }
+    }
+  }
+
+  const homeCode = legs[0].fromCode;
+  const destCode = legs[destLegIdx].toCode;
+  const homeTz = AIRPORTS[homeCode].tz;
+  const destTz = AIRPORTS[destCode].tz;
+
+  const outbound = {
+    dep: legs[0].dep,
+    arr: legs[destLegIdx].arr,
+    legs: legs.slice(0, destLegIdx + 1)
+  };
+  const ret = (destLegIdx + 1 < legs.length) ? {
+    dep: legs[destLegIdx + 1].dep,
+    arr: legs[legs.length - 1].arr,
+    legs: legs.slice(destLegIdx + 1)
+  } : null;
+
+  return { homeCode, destCode, homeTz, destTz, outbound, return: ret, allLegs: legs, longestStayMs: longestStay };
+}
+
+function circadianShift(homeOffsetMin, destOffsetMin) {
+  let diff = (destOffsetMin - homeOffsetMin) / 60;
+  while (diff > 12) diff -= 24;
+  while (diff <= -12) diff += 24;
+  const hours = Math.abs(diff);
+  if (hours < 0.5) return { hours: 0, direction: 'none', signed: 0 };
+  return { hours: +hours.toFixed(1), direction: diff > 0 ? 'east' : 'west', signed: +diff.toFixed(1) };
+}
+
+function prepDays(shiftHours, direction) {
+  if (direction === 'none' || shiftHours < 3) return 0;
+  if (direction === 'east') return shiftHours <= 5 ? 2 : 3;
+  return shiftHours <= 5 ? 1 : 2;
+}
+
+function destAdjustDays(shiftHours, direction) {
+  if (direction === 'none' || shiftHours < 1) return 1;
+  if (direction === 'east') return Math.min(7, Math.ceil(shiftHours / 1));
+  return Math.min(7, Math.ceil(shiftHours / 1.5));
+}
+
+// ============================================================
+// Schedule generation
+// ============================================================
+function buildSchedule(input) {
+  const { legs, homeBed, homeWake, destBed, doseMg } = input;
+  const trip = analyzeTrip(legs);
+
+  const homeOff = tzOffsetMinutes(trip.homeTz, trip.outbound.dep);
+  const destOff = tzOffsetMinutes(trip.destTz, trip.outbound.arr);
+  const outShift = circadianShift(homeOff, destOff);
+
+  let inShift = { hours: 0, direction: 'none', signed: 0 };
+  if (trip.return) {
+    const dOff = tzOffsetMinutes(trip.destTz, trip.return.dep);
+    const hOff = tzOffsetMinutes(trip.homeTz, trip.return.arr);
+    inShift = circadianShift(dOff, hOff);
+  }
+
+  const tripDays = trip.return
+    ? Math.max(1, Math.round((trip.return.dep - trip.outbound.arr) / 86400000))
+    : 0;
+
+  const homeBedHM = parseHM(homeBed);
+  const homeWakeHM = parseHM(homeWake);
+  const destBedHM = parseHM(destBed);
+  const destWakeHM = { h: (destBedHM.h + 8) % 24, m: destBedHM.m };
+
+  const schedule = [];
+
+  // ---------- Pre-departure prep ----------
+  const outPrep = prepDays(outShift.hours, outShift.direction);
+  for (let i = outPrep; i >= 1; i--) {
+    const date = addDays(trip.outbound.dep, -i);
+    schedule.push(buildPrepDay(date, i, outPrep, outShift, trip.homeTz,
+      homeBedHM, homeWakeHM, doseMg, 'outbound'));
+  }
+
+  // ---------- Outbound journey ----------
+  schedule.push(buildJourneyCard(trip.outbound, trip.homeTz, trip.destTz,
+    homeBedHM, destBedHM, outShift, doseMg, 'outbound'));
+
+  // ---------- At destination ----------
+  const adjustNeeded = destAdjustDays(outShift.hours, outShift.direction);
+  const daysAtDest = Math.min(adjustNeeded, Math.max(1, tripDays));
+  for (let i = 0; i < daysAtDest; i++) {
+    const date = addDays(trip.outbound.arr, i + 1);
+    if (trip.return && date >= trip.return.dep) break;
+    schedule.push(buildDestDay(date, i + 1, daysAtDest, outShift, trip.destTz,
+      destBedHM, destWakeHM, doseMg, false));
+  }
+
+  // ---------- Return journey + recovery ----------
+  if (trip.return) {
+    const inPrep = (tripDays >= adjustNeeded + 2) ? prepDays(inShift.hours, inShift.direction) : 0;
+    for (let i = inPrep; i >= 1; i--) {
+      const date = addDays(trip.return.dep, -i);
+      if (date <= trip.outbound.arr) continue;
+      schedule.push(buildPrepDay(date, i, inPrep, inShift, trip.destTz,
+        destBedHM, destWakeHM, doseMg, 'return'));
+    }
+    schedule.push(buildJourneyCard(trip.return, trip.destTz, trip.homeTz,
+      destBedHM, homeBedHM, inShift, doseMg, 'return'));
+    const recoverDays = destAdjustDays(inShift.hours, inShift.direction);
+    for (let i = 0; i < recoverDays; i++) {
+      const date = addDays(trip.return.arr, i + 1);
+      schedule.push(buildDestDay(date, i + 1, recoverDays, inShift, trip.homeTz,
+        homeBedHM, homeWakeHM, doseMg, true));
+    }
+  }
+
+  return { schedule, outShift, inShift, tripDays, trip };
+}
+
+function buildPrepDay(date, dayIdx, totalPrep, shift, currentTz, currentBed, currentWake, doseMg, leg) {
+  const maxDailyShift = shift.direction === 'east' ? 1.0 : 1.5;
+  const completedDays = totalPrep - dayIdx + 1;
+  const targetMagnitude = Math.min(completedDays * maxDailyShift, shift.hours);
+  const dayShiftHours = shift.direction === 'east' ? -targetMagnitude : +targetMagnitude;
+
+  const baseBed = clockTimeOnDateOf(date, currentTz, currentBed.h, currentBed.m);
+  const todaysBed = new Date(baseBed.getTime() + dayShiftHours * 3600000);
+  const todaysWake = new Date(todaysBed.getTime() + 8 * 3600000);
+
+  let melTime, melNote, lightSeek, lightAvoid, rationale;
+  if (shift.direction === 'east') {
+    melTime = new Date(todaysBed.getTime() - 30 * 60000);
+    melNote = `30 min before tonight's earlier bedtime`;
+    lightSeek = `Bright light for 30 min within 30 min of waking (sun, walk, or 10,000-lux box).`;
+    lightAvoid = `Dim screens and lights from ~${fmtTime(new Date(todaysBed.getTime() - 90 * 60000), currentTz)} until bed.`;
+    rationale = `Day ${completedDays} of ${totalPrep}: shifting clock ${targetMagnitude.toFixed(1)} h earlier to pre-adapt for the eastward flight.`;
+  } else {
+    melTime = new Date(todaysWake.getTime());
+    melNote = `right after waking (delays your clock)`;
+    lightSeek = `Bright light in the evening — keep room lights on until bedtime.`;
+    lightAvoid = `Avoid bright light for the first 1–2 hours after waking (sunglasses outdoors, dim indoors).`;
+    rationale = `Day ${completedDays} of ${totalPrep}: shifting clock ${targetMagnitude.toFixed(1)} h later to pre-adapt for the westward flight.`;
+  }
+
+  return {
+    kind: 'prep',
+    leg,
+    label: `T-${dayIdx}` + (leg === 'return' ? ' (return prep)' : ''),
+    title: `${leg === 'return' ? 'Pre-return' : 'Pre-flight'} · ${fmtDate(date, currentTz)}`,
+    tzLabel: `Times in ${fmtTzAbbr(date, currentTz)}`,
+    tz: currentTz,
+    sleep: { bedtime: todaysBed, waketime: todaysWake },
+    melatonin: { time: melTime, doseMg, note: melNote },
+    light: { seek: lightSeek, avoid: lightAvoid },
+    rationale
+  };
+}
+
+function buildJourneyCard(journey, fromTz, toTz, fromBed, toBed, shift, doseMg, leg) {
+  const longLeg = journey.legs.reduce((max, l) => (l.arr - l.dep) > (max.arr - max.dep) ? l : max, journey.legs[0]);
+  const longLegHours = (longLeg.arr - longLeg.dep) / 3600000;
+  const totalHours = (journey.arr - journey.dep) / 3600000;
+
+  let melTime = null, melNote = '', sleepNote = '', lightSeek = '', lightAvoid = '', rationale = '';
+  let melDisplayTz = toTz;
+
+  if (shift.direction === 'east' && shift.hours >= 3) {
+    melTime = new Date(longLeg.dep.getTime() + 90 * 60000);
+    melDisplayTz = AIRPORTS[longLeg.fromCode].tz;
+    melNote = `~90 min after takeoff of the long-haul leg (${longLeg.fromCode}→${longLeg.toCode}, ~${longLegHours.toFixed(1)} h). Eyemask + earplugs; aim to sleep until destination morning.`;
+    sleepNote = `Sleep on the long leg (${longLeg.fromCode}→${longLeg.toCode}). Stay awake on shorter connectors. Skip alcohol; hydrate.`;
+    lightSeek = `On final arrival, get bright outdoor light in destination morning (~7–10 AM local).`;
+    lightAvoid = `Wear sunglasses if you're landing before noon at destination — too-early morning light can phase-delay you the wrong way.`;
+    rationale = `Eastward ${shift.hours} h shift. Sleeping during destination's night begins the advance immediately.`;
+  } else if (shift.direction === 'west' && shift.hours >= 3) {
+    melTime = clockTimeOnDateOf(journey.arr, toTz, toBed.h, toBed.m);
+    melTime = new Date(melTime.getTime() - 30 * 60000);
+    melNote = `30 min before destination bedtime on arrival night.`;
+    sleepNote = `Stay awake on the long leg if it's daytime at destination. Naps <30 min only. Caffeine OK in the morning local.`;
+    lightSeek = `Get evening light at destination — stay outside until sunset if possible.`;
+    lightAvoid = `Avoid late-morning destination light if tempted to sleep in — would advance your clock the wrong way.`;
+    rationale = `Westward ${shift.hours} h shift. Lengthening your day to align with destination is what your body needs to delay.`;
+  } else {
+    sleepNote = `Small (${shift.hours} h) shift — sleep normally on your usual schedule.`;
+    lightSeek = `Daylight at destination upon arrival.`;
+    lightAvoid = '—';
+    rationale = `Shift small enough not to need a phase-shifting protocol.`;
+  }
+
+  return {
+    kind: 'travel',
+    leg,
+    label: leg === 'return' ? 'Return travel' : 'Outbound travel',
+    title: `${AIRPORTS[journey.legs[0].fromCode].city} → ${AIRPORTS[journey.legs[journey.legs.length - 1].toCode].city}`,
+    tzLabel: `${fmtDate(journey.dep, fromTz)} ${fmtTime(journey.dep, fromTz)} ${fmtTzAbbr(journey.dep, fromTz)} → ${fmtDate(journey.arr, toTz)} ${fmtTime(journey.arr, toTz)} ${fmtTzAbbr(journey.arr, toTz)} (${totalHours.toFixed(1)} h door-to-door)`,
+    tz: toTz,
+    journey,
+    legs: journey.legs,
+    melatonin: melTime ? { time: melTime, doseMg, note: melNote, displayTz: melDisplayTz } : null,
+    sleepNote,
+    light: { seek: lightSeek, avoid: lightAvoid },
+    rationale
+  };
+}
+
+function buildDestDay(date, dayNum, totalDays, shift, currentTz, bedTime, wakeTime, doseMg, isRecover) {
+  const bedAt = clockTimeOnDateOf(date, currentTz, bedTime.h, bedTime.m);
+  const wakeAt = new Date(bedAt.getTime() + 8 * 3600000);
+
+  let melTime = null, melNote, lightSeek, lightAvoid, rationale;
+
+  if (shift.direction === 'east') {
+    melTime = new Date(bedAt.getTime() - 30 * 60000);
+    melNote = `30 min before bed`;
+    lightSeek = `Bright outdoor light 7–10 AM (30+ min if you can).`;
+    lightAvoid = dayNum <= Math.ceil(totalDays / 2)
+      ? `Wear sunglasses or stay indoors before ~6 AM if you wake too early.`
+      : '—';
+    rationale = isRecover
+      ? `Re-advancing your clock toward home schedule (day ${dayNum} of ${totalDays}).`
+      : `Day ${dayNum} of ${totalDays} — completing the eastward advance.`;
+  } else if (shift.direction === 'west') {
+    melTime = new Date(bedAt.getTime() - 30 * 60000);
+    melNote = `30 min before bed (helps fall asleep at your now-earlier internal time)`;
+    lightSeek = `Bright light late afternoon and evening; stay out until sunset if possible.`;
+    lightAvoid = dayNum <= Math.ceil(totalDays / 2)
+      ? `Wear sunglasses outdoors before ~10 AM — early light would phase-advance you the wrong way.`
+      : '—';
+    rationale = isRecover
+      ? `Re-delaying your clock toward home schedule (day ${dayNum} of ${totalDays}).`
+      : `Day ${dayNum} of ${totalDays} — completing the westward delay.`;
+  } else {
+    melNote = '';
+    lightSeek = `Normal daylight exposure.`;
+    lightAvoid = '—';
+    rationale = `Minimal shift; sleep on local time.`;
+  }
+
+  return {
+    kind: isRecover ? 'recover' : 'dest',
+    leg: isRecover ? 'return' : 'outbound',
+    label: isRecover ? `Home D+${dayNum}` : `Dest D+${dayNum}`,
+    title: fmtDate(date, currentTz),
+    tzLabel: `Times in ${fmtTzAbbr(bedAt, currentTz)}`,
+    tz: currentTz,
+    sleep: { bedtime: bedAt, waketime: wakeAt },
+    melatonin: melTime ? { time: melTime, doseMg, note: melNote } : null,
+    light: { seek: lightSeek, avoid: lightAvoid },
+    rationale
+  };
+}
+
+// ============================================================
+// Form: dynamic leg rows
+// ============================================================
+function $(id) { return document.getElementById(id); }
+
+function makeLegRow(idx, values) {
+  const div = document.createElement('div');
+  div.className = 'leg-row';
+  div.innerHTML = `
+    <div class="leg-num">${idx + 1}</div>
+    <div>
+      <div class="leg-fields">
+        <label>From IATA<input class="leg-from" type="text" maxlength="3" autocomplete="off"></label>
+        <label>To IATA<input class="leg-to" type="text" maxlength="3" autocomplete="off"></label>
+        <label>Departs (local)<input class="leg-dep" type="datetime-local"></label>
+        <label>Arrives (local)<input class="leg-arr" type="datetime-local"></label>
+      </div>
+      <div class="leg-hint"></div>
+    </div>
+    <button class="leg-remove" type="button" title="Remove leg">×</button>
+  `;
+  const fromInput = div.querySelector('.leg-from');
+  const toInput = div.querySelector('.leg-to');
+  const depInput = div.querySelector('.leg-dep');
+  const arrInput = div.querySelector('.leg-arr');
+  const hint = div.querySelector('.leg-hint');
+
+  function updateHint() {
+    fromInput.value = fromInput.value.toUpperCase();
+    toInput.value = toInput.value.toUpperCase();
+    const f = fromInput.value, t = toInput.value;
+    if (!f && !t) { hint.textContent = ''; hint.className = 'leg-hint'; return; }
+    const fi = AIRPORTS[f], ti = AIRPORTS[t];
+    const fStr = f ? (fi ? `${fi.city} (${fi.tz})` : `Unknown ${f}`) : '?';
+    const tStr = t ? (ti ? `${ti.city} (${ti.tz})` : `Unknown ${t}`) : '?';
+    hint.textContent = `${fStr} → ${tStr}`;
+    hint.className = (f && t && fi && ti) ? 'leg-hint ok' : 'leg-hint bad';
+  }
+  fromInput.addEventListener('input', updateHint);
+  toInput.addEventListener('input', updateHint);
+  fromInput.addEventListener('input', scheduleSummaryUpdate);
+  toInput.addEventListener('input', scheduleSummaryUpdate);
+  depInput.addEventListener('change', scheduleSummaryUpdate);
+  arrInput.addEventListener('change', scheduleSummaryUpdate);
+
+  div.querySelector('.leg-remove').addEventListener('click', () => {
+    div.remove();
+    renumberLegs();
+    updateTripSummary();
+  });
+
+  if (values) {
+    fromInput.value = (values.fromCode || '').toUpperCase();
+    toInput.value = (values.toCode || '').toUpperCase();
+    if (values.dep) depInput.value = formatLocalDtForInput(values.dep, AIRPORTS[values.fromCode]?.tz);
+    if (values.arr) arrInput.value = formatLocalDtForInput(values.arr, AIRPORTS[values.toCode]?.tz);
+    updateHint();
+  }
+  return div;
+}
+
+function addLegRow(values) {
+  const container = $('legs-container');
+  const row = makeLegRow(container.children.length, values);
+  container.appendChild(row);
+  return row;
+}
+
+function renumberLegs() {
+  const rows = document.querySelectorAll('.leg-row');
+  rows.forEach((row, i) => { row.querySelector('.leg-num').textContent = i + 1; });
+}
+
+function clearLegs() {
+  $('legs-container').innerHTML = '';
+  updateTripSummary();
+}
+
+function readLegsFromForm() {
+  const rows = document.querySelectorAll('.leg-row');
+  const legs = [];
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    const fromCode = row.querySelector('.leg-from').value.toUpperCase().trim();
+    const toCode = row.querySelector('.leg-to').value.toUpperCase().trim();
+    const depStr = row.querySelector('.leg-dep').value;
+    const arrStr = row.querySelector('.leg-arr').value;
+    if (!fromCode && !toCode && !depStr && !arrStr) continue;
+    if (!fromCode || !toCode || !depStr || !arrStr) {
+      throw new Error(`Leg ${i + 1} is incomplete.`);
+    }
+    if (!AIRPORTS[fromCode]) throw new Error(`Leg ${i + 1}: unknown airport "${fromCode}".`);
+    if (!AIRPORTS[toCode]) throw new Error(`Leg ${i + 1}: unknown airport "${toCode}".`);
+    const depParts = parseDtLocal(depStr), arrParts = parseDtLocal(arrStr);
+    if (!depParts || !arrParts) throw new Error(`Leg ${i + 1}: invalid date/time.`);
+    const dep = makeZonedDate(...depParts, AIRPORTS[fromCode].tz);
+    const arr = makeZonedDate(...arrParts, AIRPORTS[toCode].tz);
+    if (arr <= dep) throw new Error(`Leg ${i + 1}: arrival must be after departure.`);
+    legs.push({ fromCode, toCode, dep, arr });
+  }
+  return legs;
+}
+
+let summaryUpdateTimer = null;
+function scheduleSummaryUpdate() {
+  clearTimeout(summaryUpdateTimer);
+  summaryUpdateTimer = setTimeout(updateTripSummary, 200);
+}
+
+function updateTripSummary() {
+  const el = $('trip-summary');
+  let legs;
+  try { legs = readLegsFromForm(); } catch (e) { el.textContent = e.message; return; }
+  if (legs.length === 0) { el.textContent = 'Add flight legs above to see the detected trip.'; return; }
+  try {
+    const trip = analyzeTrip(legs);
+    const homeOff = tzOffsetMinutes(trip.homeTz, trip.outbound.dep);
+    const destOff = tzOffsetMinutes(trip.destTz, trip.outbound.arr);
+    const out = circadianShift(homeOff, destOff);
+    const tripDays = trip.return ? Math.max(1, Math.round((trip.return.dep - trip.outbound.arr) / 86400000)) : 0;
+    const dirText = s => s.direction === 'east' ? `${s.hours} h east (advance)`
+      : s.direction === 'west' ? `${s.hours} h west (delay)`
+      : 'no significant shift';
+    let msg = `Detected: home ${trip.homeCode} (${AIRPORTS[trip.homeCode].city}) → destination ${trip.destCode} (${AIRPORTS[trip.destCode].city})`;
+    if (tripDays > 0) msg += ` · ${tripDays} day${tripDays !== 1 ? 's' : ''} on the ground`;
+    msg += ` · outbound ${dirText(out)}`;
+    if (trip.return) {
+      const dOff = tzOffsetMinutes(trip.destTz, trip.return.dep);
+      const hOff = tzOffsetMinutes(trip.homeTz, trip.return.arr);
+      const inS = circadianShift(dOff, hOff);
+      msg += `, return ${dirText(inS)}`;
+    } else {
+      msg += `, no return leg`;
+    }
+    if (trip.allLegs.length > (trip.outbound.legs.length + (trip.return?.legs.length || 0))) {
+      // unreachable safeguard
+    }
+    msg += '.';
+    el.textContent = msg;
+  } catch (e) {
+    el.textContent = e.message;
+  }
+}
+
+// ============================================================
+// Render schedule
+// ============================================================
+function renderSchedule(result) {
+  const { schedule, outShift, inShift, tripDays, trip } = result;
+  const dirText = s => s.direction === 'east' ? `${s.hours} h east (advance)`
+    : s.direction === 'west' ? `${s.hours} h west (delay)`
+    : 'no significant shift';
+
+  let summary = `<strong>Home:</strong> ${trip.homeCode} (${AIRPORTS[trip.homeCode].city}) · <strong>Destination:</strong> ${trip.destCode} (${AIRPORTS[trip.destCode].city})`;
+  if (tripDays > 0) summary += ` · <strong>${tripDays}</strong> day${tripDays !== 1 ? 's' : ''} on the ground`;
+  summary += `<br><strong>Outbound shift:</strong> ${dirText(outShift)}`;
+  if (trip.return) summary += ` · <strong>Return shift:</strong> ${dirText(inShift)}`;
+  const dose = result.schedule.find(d => d.melatonin)?.melatonin?.doseMg ?? 0.5;
+  summary += `<br><span class="muted">Times shown in the timezone you'll be in. Melatonin dose: ${dose} mg.</span>`;
+  $('summary').innerHTML = summary;
+
+  $('schedule').innerHTML = schedule.map(renderDay).join('');
+  $('schedule-section').style.display = 'block';
+  $('schedule-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderDay(d) {
+  const rows = [];
+
+  if (d.kind === 'travel' && d.legs) {
+    const legHtml = d.legs.map(l => {
+      const fromTz = AIRPORTS[l.fromCode].tz;
+      const toTz = AIRPORTS[l.toCode].tz;
+      const dur = ((l.arr - l.dep) / 3600000).toFixed(1);
+      return `<li><strong>${l.fromCode} → ${l.toCode}</strong> · ${fmtDate(l.dep, fromTz)} ${fmtTime(l.dep, fromTz)} ${fmtTzAbbr(l.dep, fromTz)} → ${fmtDate(l.arr, toTz)} ${fmtTime(l.arr, toTz)} ${fmtTzAbbr(l.arr, toTz)} (${dur} h)</li>`;
+    }).join('');
+    rows.push(row('Flights', `<ul class="leg-list">${legHtml}</ul>`));
+  }
+
+  if (d.sleep) {
+    rows.push(row('Sleep', `<span class="pill">Sleep</span>${fmtTime(d.sleep.bedtime, d.tz)} → ${fmtTime(d.sleep.waketime, d.tz)}`));
+  } else if (d.sleepNote) {
+    rows.push(row('Sleep', d.sleepNote));
+  }
+
+  if (d.melatonin) {
+    const tz = d.melatonin.displayTz || d.tz;
+    rows.push(row('Melatonin', `<span class="pill">${d.melatonin.doseMg} mg</span>${fmtTime(d.melatonin.time, tz)} ${fmtTzAbbr(d.melatonin.time, tz)} · ${d.melatonin.note}`));
+  }
+
+  if (d.light?.seek && d.light.seek !== '—') rows.push(row('Seek light', d.light.seek));
+  if (d.light?.avoid && d.light.avoid !== '—') rows.push(row('Avoid light', d.light.avoid));
+
+  return `<div class="day-card ${d.kind}">
+    <div class="day-head">
+      <div class="day-title">${escapeHtml(d.title)}</div>
+      <div class="day-tag">${escapeHtml(d.label)}</div>
+    </div>
+    <div class="muted" style="font-size:12px; margin-bottom:8px;">${escapeHtml(d.tzLabel)}</div>
+    <div class="day-rows">${rows.join('')}</div>
+    ${d.rationale ? `<div class="rationale">${escapeHtml(d.rationale)}</div>` : ''}
+  </div>`;
+}
+
+function row(lab, val) {
+  return `<div class="day-row"><div class="lab">${lab}</div><div class="val">${val}</div></div>`;
+}
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+// ============================================================
+// Wire up UI
+// ============================================================
+
+function applyParse(text) {
+  const legs = parseItinerary(text);
+  const msg = $('parse-msg');
+  if (!legs.length) {
+    msg.textContent = "Couldn't extract flight legs. Try the example to see the expected format, or fill the legs manually below.";
+    msg.className = 'bad';
+    return;
+  }
+  clearLegs();
+  for (const l of legs) addLegRow(l);
+  updateTripSummary();
+  msg.textContent = `Parsed ${legs.length} leg${legs.length !== 1 ? 's' : ''}. Verify each row below.`;
+  msg.className = 'ok';
+}
+
+const EXAMPLE = `Alaska 737 on May 16, 2026
+
+Seattle to Washington DC
+↗ 8:30 AM PDT SEA (On Time)
+↘ 4:38 PM EDT IAD (On Time)
+
+United 996 on May 16, 2026
+↗ 7:20 PM EDT IAD
+↘ 9:05 AM GMT ACC
+
+ASKY 22 on May 17, 2026
+↗ 2:10 PM GMT ACC
+↘ 4:25 PM GMT FNA
+
+Air Peace 7537 on May 22, 2026
+↗ 12:15 PM GMT FNA
+↘ 3:05 PM GMT ACC
+
+United 997 on May 22, 2026
+↗ 10:20 PM GMT ACC
+↘ 5:00 AM EDT IAD
+
+Alaska 375 on May 23, 2026
+↗ 9:00 AM EDT IAD
+↘ 11:45 AM PDT SEA`;
+
+function init() {
+  $('parse-btn').addEventListener('click', () => {
+    const text = $('paste-area').value;
+    if (!text.trim()) { $('parse-msg').textContent = 'Paste something first.'; $('parse-msg').className = 'bad'; return; }
+    applyParse(text);
+  });
+  $('example-btn').addEventListener('click', () => {
+    $('paste-area').value = EXAMPLE;
+    applyParse(EXAMPLE);
+  });
+  $('clear-legs-btn').addEventListener('click', () => {
+    $('paste-area').value = '';
+    $('parse-msg').textContent = '';
+    clearLegs();
+  });
+  $('add-leg-btn').addEventListener('click', () => {
+    addLegRow();
+    updateTripSummary();
+  });
+  $('compute-btn').addEventListener('click', () => {
+    let legs;
+    try { legs = readLegsFromForm(); }
+    catch (e) { alert(e.message); return; }
+    if (legs.length === 0) { alert('Add at least one flight leg.'); return; }
+    const input = {
+      legs,
+      homeBed: $('home-bed').value,
+      homeWake: $('home-wake').value,
+      destBed: $('dest-bed').value,
+      doseMg: parseFloat($('dose').value)
+    };
+    try {
+      const result = buildSchedule(input);
+      renderSchedule(result);
+    } catch (e) {
+      console.error(e);
+      alert('Could not build schedule: ' + e.message);
+    }
+  });
+
+  // Start with two empty leg rows
+  addLegRow();
+  addLegRow();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
